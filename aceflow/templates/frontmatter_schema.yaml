@@ -1,0 +1,13 @@
+# frontmatter_schema.yaml
+
+required_fields:
+  - stage              # 所属阶段（S1-S8）
+  - iteration          # 所属迭代，例如 iteration-01
+  - doc_owner          # 文档负责人
+  - created_at         # 创建时间
+  - status             # 当前状态：待确认/已完成/已验收 等
+optional_fields:
+  - task_id            # 所属任务编号（如适用）
+  - related_user_story # 关联 User Story 编号（如适用）
+  - updated_at         # 更新时间（可用于状态追踪）
+  - tags               # 可自定义扩展标签字段

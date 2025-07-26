@@ -1,0 +1,10 @@
+{
+  "projectRoot": "./",
+  "docDir": "./docs",
+  "srcDir": "./teamwiki/src",
+  "testsDir": "./aceflow_result/tests",
+  "iterationRoot": "./aceflow_result/iterations",
+  "defaultBranch": "main",
+  "codeReviewThreshold": 90,
+  "statusTableDir": "./aceflow_result/status.md"
+}

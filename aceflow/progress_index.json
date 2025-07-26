@@ -1,0 +1,58 @@
+{
+  "iterations": [
+    {
+      "id": "iteration-01",
+      "status": "in_progress",
+      "last_updated": "2025-07-01",
+      "stages": [
+        {
+          "stage": "s1_user_story",
+          "path": "aceflow_result/iterations/iteration-01/s1_user_story.md",
+          "status": "completed"
+        },
+        {
+          "stage": "s2_tasks",
+          "path": "aceflow_result/iterations/iteration-01/s2_tasks.md",
+          "status": "completed"
+        },
+        {
+          "stage": "s3_testcases",
+          "path": "aceflow_result/iterations/iteration-01/s3_testcases.md",
+          "status": "in_progress"
+        },
+        {
+          "stage": "s4_implementation",
+          "path": "aceflow_result/iterations/iteration-01/s4_implementation.md",
+          "status": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "iteration-02",
+      "status": "not_started",
+      "last_updated": "2025-07-01",
+      "stages": [
+        {
+          "stage": "s1_user_story",
+          "path": "aceflow_result/iterations/iteration-02/s1_user_story.md",
+          "status": "not_started"
+        }
+      ]
+    },
+    {
+      "id": "iteration-03",
+      "status": "not_started",
+      "last_updated": "2025-07-01",
+      "stages": [
+        {
+          "stage": "s1_user_story",
+          "path": "aceflow_result/iterations/iteration-03/s1_user_story.md",
+          "status": "not_started"
+        }
+      ]
+    }
+  ],
+  "current_iteration": "iteration-01",
+  "current_stage": "s3_testcases",
+  "last_updated": "2025-07-01 19:40:00"
+}

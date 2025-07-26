@@ -1,0 +1,22 @@
+{
+  "id": "tianjin",
+  "name": "天津市",
+  "cities": [
+    {
+      "id": "tianjin_city",
+      "name": "天津市",
+      "population": 13866000,
+      "gdp": 14083.0,
+      "perCapitaDisposableIncome": 45348,
+      "averageHousePrice": 28000,
+      "licensePlate": "津A",
+      "idPrefix": "120000",
+      "location": [117.190182, 39.125596],
+      "attractions": ["五大道", "意式风情区", "古文化街", "天津之眼", "盘山"],
+      "cuisine": ["狗不理包子", "煎饼果子", "耳朵眼炸糕", "十八街麻花", "津门小站稻"],
+      "universities": ["南开大学", "天津大学", "河北工业大学", "天津医科大学"],
+      "businessDistricts": ["小白楼", "南市", "滨海新区", "华苑"],
+      "famousPeople": ["霍元甲", "张伯苓", "曹禺", "李叔同", "马三立"]
+    }
+  ]
+}

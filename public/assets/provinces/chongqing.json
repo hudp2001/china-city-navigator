@@ -1,0 +1,22 @@
+{
+  "id": "chongqing",
+  "name": "重庆市",
+  "cities": [
+    {
+      "id": "chongqing_city",
+      "name": "重庆市",
+      "population": 32124000,
+      "gdp": 25002.0,
+      "perCapitaDisposableIncome": 35152,
+      "averageHousePrice": 15000,
+      "licensePlate": "渝A",
+      "idPrefix": "500000",
+      "location": [106.504956, 29.533155],
+      "attractions": ["洪崖洞", "磁器口", "武隆喀斯特", "大足石刻", "长江索道"],
+      "cuisine": ["重庆火锅", "小面", "酸辣粉", "毛血旺", "辣子鸡"],
+      "universities": ["重庆大学", "西南大学", "重庆医科大学", "重庆邮电大学"],
+      "businessDistricts": ["解放碑", "江北嘴", "南坪", "沙坪坝"],
+      "famousPeople": ["刘伯承", "聂荣臻", "卢作孚", "郭沫若", "巴金"]
+    }
+  ]
+}

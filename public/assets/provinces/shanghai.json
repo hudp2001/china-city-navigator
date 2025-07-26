@@ -1,0 +1,23 @@
+{
+  "id": "shanghai",
+  "name": "上海市",
+  "cities": [
+    {
+      "id": "shanghai_city",
+      "name": "上海市",
+      "population": 24870895,
+      "gdp": 38700.58,
+      "perCapitaDisposableIncome": 72183,
+      "averageHousePrice": 68000,
+      "licensePlate": "沪A",
+      "idPrefix": "310000",
+      "location": [121.473701, 31.230416],
+      "description": "上海市是中国最大的经济中心城市，国际金融、贸易、航运中心，是中国的经济、金融、贸易、航运、科技创新中心。",
+      "attractions": ["外滩", "东方明珠", "豫园", "南京路步行街", "上海迪士尼乐园"],
+      "cuisine": ["小笼包", "生煎包", "本帮菜", "白切鸡", "排骨年糕"],
+      "universities": ["复旦大学", "上海交通大学", "同济大学", "华东师范大学"],
+      "businessDistricts": ["陆家嘴", "南京路", "淮海路", "徐家汇"],
+      "famousPeople": ["鲁迅", "茅盾", "叶圣陶", "张爱玲", "钱钟书"]
+    }
+  ]
+}

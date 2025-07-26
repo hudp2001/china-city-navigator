@@ -1,0 +1,172 @@
+[
+  {
+    "id": "beijing",
+    "name": "北京",
+    "path": "provinces/beijing.json"
+  },
+  {
+    "id": "tianjin",
+    "name": "天津",
+    "path": "provinces/tianjin.json"
+  },
+  {
+    "id": "chongqing",
+    "name": "重庆",
+    "path": "provinces/chongqing.json"
+  },
+  {
+    "id": "hongkong",
+    "name": "香港",
+    "path": "provinces/hongkong.json"
+  },
+  {
+    "id": "macau",
+    "name": "澳门",
+    "path": "provinces/macau.json"
+  },
+  {
+    "id": "shanghai",
+    "name": "上海",
+    "path": "provinces/shanghai.json"
+  },
+  {
+    "id": "hebei",
+    "name": "河北",
+    "path": "provinces/hebei.json"
+  },
+  {
+    "id": "shanxi",
+    "name": "山西",
+    "path": "provinces/shanxi.json"
+  },
+  {
+    "id": "inner-mongolia",
+    "name": "内蒙古",
+    "path": "provinces/inner-mongolia.json"
+  },
+  {
+    "id": "liaoning",
+    "name": "辽宁",
+    "path": "provinces/liaoning.json"
+  },
+  {
+    "id": "jilin",
+    "name": "吉林",
+    "path": "provinces/jilin.json"
+  },
+  {
+    "id": "heilongjiang",
+    "name": "黑龙江",
+    "path": "provinces/heilongjiang.json"
+  },
+  {
+    "id": "jiangsu",
+    "name": "江苏",
+    "path": "provinces/jiangsu.json"
+  },
+  {
+    "id": "zhejiang",
+    "name": "浙江",
+    "path": "provinces/zhejiang.json"
+  },
+  {
+    "id": "anhui",
+    "name": "安徽",
+    "path": "provinces/anhui.json"
+  },
+  {
+    "id": "fujian",
+    "name": "福建",
+    "path": "provinces/fujian.json"
+  },
+  {
+    "id": "jiangxi",
+    "name": "江西",
+    "path": "provinces/jiangxi.json"
+  },
+  {
+    "id": "shandong",
+    "name": "山东",
+    "path": "provinces/shandong.json"
+  },
+  {
+    "id": "henan",
+    "name": "河南",
+    "path": "provinces/henan.json"
+  },
+  {
+    "id": "hubei",
+    "name": "湖北",
+    "path": "provinces/hubei.json"
+  },
+  {
+    "id": "hunan",
+    "name": "湖南",
+    "path": "provinces/hunan.json"
+  },
+  {
+    "id": "guangdong",
+    "name": "广东",
+    "path": "provinces/guangdong.json"
+  },
+  {
+    "id": "guangxi",
+    "name": "广西",
+    "path": "provinces/guangxi.json"
+  },
+  {
+    "id": "hainan",
+    "name": "海南",
+    "path": "provinces/hainan.json"
+  },
+  {
+    "id": "ningxia",
+    "name": "宁夏",
+    "path": "provinces/ningxia.json"
+  },
+  {
+    "id": "qinghai",
+    "name": "青海",
+    "path": "provinces/qinghai.json"
+  },
+  {
+    "id": "gansu",
+    "name": "甘肃",
+    "path": "provinces/gansu.json"
+  },
+  {
+    "id": "shanxi2",
+    "name": "陕西",
+    "path": "provinces/shanxi2.json"
+  },
+  {
+    "id": "xinjiang",
+    "name": "新疆",
+    "path": "provinces/xinjiang.json"
+  },
+  {
+    "id": "sichuan",
+    "name": "四川",
+    "path": "provinces/sichuan.json"
+  },
+  {
+    "id": "yunnan",
+    "name": "云南",
+    "path": "provinces/yunnan.json"
+  },
+  {
+    "id": "guizhou",
+    "name": "贵州",
+    "path": "provinces/guizhou.json"
+  },
+  {
+    "id": "tibet",
+    "name": "西藏",
+    "path": "provinces/tibet.json"
+  },
+  {
+    "id": "taiwan",
+    "name": "台湾",
+    "path": "provinces/taiwan.json"
+  }
+]

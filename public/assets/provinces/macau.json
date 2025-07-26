@@ -1,0 +1,22 @@
+{
+  "id": "macau",
+  "name": "澳门特别行政区",
+  "cities": [
+    {
+      "id": "macau_city",
+      "name": "澳门特别行政区",
+      "population": 683000,
+      "gdp": 2400.0,
+      "perCapitaDisposableIncome": 320000,
+      "averageHousePrice": 1200000,
+      "licensePlate": "澳A",
+      "idPrefix": "820000",
+      "location": [113.54909, 22.198951],
+      "attractions": ["大三巴牌坊", "威尼斯人", "葡京娱乐场", "妈阁庙", "路环岛"],
+      "cuisine": ["葡式蛋挞", "猪扒包", "水蟹粥", "葡国鸡", "木糠布甸"],
+      "universities": ["澳门大学", "澳门科技大学", "澳门理工学院"],
+      "businessDistricts": ["新口岸", "氹仔", "路环", "葡京"],
+      "famousPeople": ["何鸿燊", "叶德利", "容韵琳", "李菁", "杜岚"]
+    }
+  ]
+}

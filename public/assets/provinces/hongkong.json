@@ -1,0 +1,22 @@
+{
+  "id": "hongkong",
+  "name": "香港特别行政区",
+  "cities": [
+    {
+      "id": "hongkong_city",
+      "name": "香港特别行政区",
+      "population": 7413000,
+      "gdp": 24500.0,
+      "perCapitaDisposableIncome": 320000,
+      "averageHousePrice": 1500000,
+      "licensePlate": "港A",
+      "idPrefix": "810000",
+      "location": [114.109497, 22.396428],
+      "attractions": ["维多利亚港", "太平山", "迪士尼乐园", "海洋公园", "大屿山"],
+      "cuisine": ["港式茶餐厅", "菠萝包", "丝袜奶茶", "叉烧包", "蛋挞"],
+      "universities": ["香港大学", "香港科技大学", "香港中文大学", "香港城市大学"],
+      "businessDistricts": ["中环", "金钟", "湾仔", "铜锣湾"],
+      "famousPeople": ["李小龙", "成龙", "周润发", "张国荣", "梅艳芳"]
+    }
+  ]
+}

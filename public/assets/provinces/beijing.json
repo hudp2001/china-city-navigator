@@ -1,0 +1,22 @@
+{
+  "id": "beijing",
+  "name": "北京市",
+  "cities": [
+    {
+      "id": "beijing_city",
+      "name": "北京市",
+      "population": 21893095,
+      "gdp": 36102.6,
+      "perCapitaDisposableIncome": 69398,
+      "averageHousePrice": 65000,
+      "licensePlate": "京A",
+      "idPrefix": "110000",
+      "location": [116.397428, 39.90923],
+      "attractions": ["故宫", "长城", "天坛", "颐和园", "天安门广场"],
+      "cuisine": ["北京烤鸭", "炸酱面", "豆汁", "驴打滚", "糖葫芦"],
+      "universities": ["北京大学", "清华大学", "中国人民大学", "北京师范大学"],
+      "businessDistricts": ["王府井", "西单", "国贸", "中关村"],
+      "famousPeople": ["鲁迅", "老舍", "郭沫若", "茅盾", "沈从文"]
+    }
+  ]
+}
