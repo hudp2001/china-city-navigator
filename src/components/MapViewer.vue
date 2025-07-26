@@ -7,15 +7,25 @@
           @click="showHeatmap = !showHeatmap"
           :class="{ active: showHeatmap }"
           class="heatmap-toggle"
+          :disabled="!map"
         >
           热力图
         </button>
-        <button @click="exportMap" class="export-btn">
+        <button @click="exportMap" class="export-btn" :disabled="!map">
           导出地图
         </button>
       </div>
     </div>
-    <div id="map-container" class="map-container"></div>
+    <div id="map-container" class="map-container">
+      <div v-if="loading" class="map-loading">
+        <div class="spinner"></div>
+        <p>地图加载中...</p>
+      </div>
+      <div v-if="error" class="map-error">
+        <p>地图加载失败: {{ error }}</p>
+        <button @click="retryLoadMap" class="retry-btn">重试</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -23,7 +33,10 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import html2canvas from 'html2canvas'
 import AMapLoader from '@amap/amap-jsapi-loader'
+
 const showHeatmap = ref(false)
+const loading = ref(true)
+const error = ref(null)
 let map = null
 let heatmapLayer = null
 let AMap = null
@@ -41,42 +54,51 @@ onUnmounted(() => {
 })
 
 const initMap = async () => {
+  loading.value = true
+  error.value = null
+  
   try {
     // 使用AMapLoader加载高德地图API
     AMap = await AMapLoader.load({
-      key: "e40de3c00a562a2b238ca8986aacf68f", // 请替换为实际的高德地图API Key
+      key: "悠然key", // 请替换为实际的高德地图API Key
       version: "1.4.15", // 指定要加载的API版本
       plugins: ['AMap.Scale', 'AMap.ToolBar', 'AMap.ControlBar', 'AMap.Geocoder', 'AMap.Heatmap']
     })
-  } catch (error) {
-    console.error('高德地图API加载失败:', error)
-    return
+    
+    // 创建地图实例
+    map = new AMap.Map('map-container', {
+      zoom: 5,
+      center: [108.953098, 34.2778], // 中国地理中心
+      mapStyle: 'amap://styles/normal',
+      features: ['bg', 'road', 'building', 'point'],
+      viewMode: '2D'
+    })
+
+    // 添加地图控件
+    map.addControl(new AMap.Scale())
+    map.addControl(new AMap.ToolBar())
+    map.addControl(new AMap.ControlBar())
+
+    // 地图加载完成后的回调
+    map.on('complete', () => {
+      console.log('地图加载完成')
+      loading.value = false
+      emit('map-ready', map)
+    })
+
+    // 地图点击事件
+    map.on('click', (e) => {
+      console.log('地图点击位置:', e.lnglat)
+    })
+  } catch (err) {
+    console.error('高德地图API加载失败:', err)
+    error.value = err.message || '未知错误'
+    loading.value = false
   }
+}
 
-  // 创建地图实例
-  map = new AMap.Map('map-container', {
-    zoom: 5,
-    center: [108.953098, 34.2778], // 中国地理中心
-    mapStyle: 'amap://styles/normal',
-    features: ['bg', 'road', 'building', 'point'],
-    viewMode: '2D'
-  })
-
-  // 添加地图控件
-  map.addControl(new AMap.Scale())
-  map.addControl(new AMap.ToolBar())
-  map.addControl(new AMap.ControlBar())
-
-  // 地图加载完成后的回调
-  map.on('complete', () => {
-    console.log('地图加载完成')
-    emit('map-ready', map)
-  })
-
-  // 地图点击事件
-  map.on('click', (e) => {
-    console.log('地图点击位置:', e.lnglat)
-  })
+const retryLoadMap = () => {
+  initMap()
 }
 
 // 定位到指定城市
@@ -202,8 +224,8 @@ const exportMap = async () => {
     link.download = `china-map-${new Date().toISOString().split('T')[0]}.png`
     link.href = canvas.toDataURL()
     link.click()
-  } catch (error) {
-    console.error('导出地图失败:', error)
+  } catch (err) {
+    console.error('导出地图失败:', err)
   }
 }
 
@@ -264,8 +286,57 @@ defineExpose({
   border-color: var(--primary-color, #007bff);
 }
 
+.heatmap-toggle:disabled, .export-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .map-container {
   flex: 1;
   min-height: 0;
+  position: relative;
+}
+
+.map-loading, .map-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 100;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.retry-btn {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+.retry-btn:hover {
+  background-color: #0056b3;
 }
 </style>
