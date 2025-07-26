@@ -1,6 +1,6 @@
 <template>
   <div class="map-viewer">
-    <div id="map" ref="mapContainer"></div>
+    <div id="map" ref="mapContainer" class="map-container"></div>
   </div>
 </template>
 
@@ -201,28 +201,67 @@ const restoreDefaultMap = () => {
   console.log('地图已恢复默认状态')
 }
 
-// 暴露方法给父组件调用
+// 定位到城市
+const locateToCity = (cityName, zoomLevel = 12) => {
+  if (!mapInstance.value) return
+
+  // 使用高德地图的地理编码服务
+  window.AMap.plugin('AMap.Geocoder', () => {
+    const geocoder = new window.AMap.Geocoder()
+    
+    geocoder.getLocation(cityName, (status, result) => {
+      if (status === 'complete' && result.geocodes.length > 0) {
+        const location = result.geocodes[0].location
+        mapInstance.value.setCenter(location)
+        mapInstance.value.setZoom(zoomLevel)
+        
+        // 添加标记
+        const marker = new window.AMap.Marker({
+          position: location,
+          title: cityName,
+          animation: 'AMAP_ANIMATION_DROP'
+        })
+        mapInstance.value.add(marker)
+        
+        // 添加信息窗体
+        const infoWindow = new window.AMap.InfoWindow({
+          content: `<div style="padding: 10px;"><strong>${cityName}</strong></div>`,
+          offset: new window.AMap.Pixel(0, -30)
+        })
+        
+        marker.on('click', () => {
+          infoWindow.open(mapInstance.value, location)
+        })
+      }
+    })
+  })
+}
+
+// 定位到省份
+const locateToProvince = (provinceName, zoomLevel = 8) => {
+  locateToCity(provinceName, zoomLevel)
+}
+
+// 暴露方法给父组件
 defineExpose({
   setMapCenter,
   showAllCitiesWithMultipleHeatmaps,
-  restoreDefaultMap
+  restoreDefaultMap,
+  locateToCity,
+  locateToProvince,
+  map: mapInstance
 })
-
 </script>
 
 <style scoped>
 .map-viewer {
-  width: 100%;
-  position: relative;
   height: 100%;
+  width: 100%;
 }
-#map {
+
+.map-container {
   width: 100%;
   height: 100%;
-}
-/* 添加标记信息窗口样式 */
-.marker-info {
-  padding: 5px 10px;
-  font-weight: bold;
+  min-height: 400px;
 }
 </style>
