@@ -1,236 +1,117 @@
 <template>
   <div class="map-viewer">
-    <div id="map" ref="mapContainer" class="map-container"></div>
+    <div class="map-header">
+      <h3>地图导航</h3>
+      <div class="map-controls">
+        <button
+          @click="showHeatmap = !showHeatmap"
+          :class="{ active: showHeatmap }"
+          class="heatmap-toggle"
+        >
+          热力图
+        </button>
+        <button @click="exportMap" class="export-btn">
+          导出地图
+        </button>
+      </div>
+    </div>
+    <div id="map-container" class="map-container"></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { initMap, addCityMarker } from '../services/map-service'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import html2canvas from 'html2canvas'
+import AMapLoader from '@amap/amap-jsapi-loader'
+const showHeatmap = ref(false)
+let map = null
+let heatmapLayer = null
+let AMap = null
 
-const mapContainer = ref(null)
-const mapInstance = ref(null)
-let markers = [] // 存储所有标记
-let defaultMarkers = [] // 存储默认标记
-let circles = [] // 存储圆形背景标记
+const emit = defineEmits(['map-ready'])
 
-onMounted(async () => {
-  try {
-    console.log('开始初始化地图...')
-    // 确保DOM已更新
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    // 初始化地图 (使用北京中心点)
-    const map = await initMap('map', [116.397428, 39.90923], 5)
-    console.log('地图初始化成功:', map)
-    // 保存地图实例以便后续操作
-    mapInstance.value = map
-    mapContainer.value = document.getElementById('map')
-    
-    // 不再添加默认城市标记
-  } catch (error) {
-    console.error('地图初始化失败:', error)
+onMounted(() => {
+  initMap()
+})
+
+onUnmounted(() => {
+  if (map) {
+    map.destroy()
   }
 })
 
-// 设置地图中心点和缩放级别
-const setMapCenter = (center, zoom) => {
-  if (mapInstance.value) {
-    mapInstance.value.setCenter(center)
-    mapInstance.value.setZoom(zoom)
-  }
-}
-
-// 显示所有城市并根据不同的状态显示不同的背景色
-const showAllCitiesWithMultipleHeatmaps = (allCities, visitedCities, ranCities, collectedCities) => {
-  if (!mapInstance.value || !allCities || !Array.isArray(allCities)) {
-    console.warn('无法显示城市热力图：地图未初始化或城市数据无效')
+const initMap = async () => {
+  try {
+    // 使用AMapLoader加载高德地图API
+    AMap = await AMapLoader.load({
+      key: "e40de3c00a562a2b238ca8986aacf68f", // 请替换为实际的高德地图API Key
+      version: "1.4.15", // 指定要加载的API版本
+      plugins: ['AMap.Scale', 'AMap.ToolBar', 'AMap.ControlBar', 'AMap.Geocoder', 'AMap.Heatmap']
+    })
+  } catch (error) {
+    console.error('高德地图API加载失败:', error)
     return
   }
 
-  // 清除现有的热力图标记
-  clearHeatmapMarkers()
-  
-  // 创建一个映射来快速查找城市状态
-  const visitedMap = new Map(visitedCities.map(city => [city.id, city]));
-  const ranMap = new Map(ranCities.map(city => [city.id, city]));
-  const collectedMap = new Map(collectedCities.map(city => [city.id, city]));
-  
-  // 添加所有城市的标记
-  allCities.forEach(city => {
-    if (city.location && city.name) {
-      try {
-        // 检查城市的各种状态
-        const isVisited = visitedMap.has(city.id);
-        const isRan = ranMap.has(city.id);
-        const isCollected = collectedMap.has(city.id);
-        
-        // 创建标记
-        const marker = new window.AMap.Marker({
-          position: city.location,
-          title: city.name,
-          animation: 'AMAP_ANIMATION_DROP',
-          clickable: true,
-          // 根据状态使用不同颜色的标记
-          icon: new window.AMap.Icon({
-            size: new window.AMap.Size(20, 20),
-            image: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
-            imageSize: new window.AMap.Size(20, 20),
-            imageOffset: isVisited || isRan 
-              ? new window.AMap.Pixel(-54, -90) // 红色标记（去过或跑过）
-              : isCollected 
-                ? new window.AMap.Pixel(-108, -90) // 绿色标记（收藏）
-                : new window.AMap.Pixel(-28, -90)  // 蓝色标记（未访问）
-          })
-        })
-        
-        // 添加背景圆圈（可以同时显示多种类型）
-        const circlesToAdd = [];
-        
-        // 添加去过背景（深蓝色，50公里）
-        if (isVisited) {
-          const visitedCircle = new window.AMap.Circle({
-            center: city.location,
-            radius: 50000, // 50公里（从100公里修改为50公里）
-            fillColor: '#0000FF', // 深蓝色
-            fillOpacity: 0.3,
-            strokeColor: '#0000FF',
-            strokeOpacity: 0.5,
-            strokeWeight: 1
-          });
-          circlesToAdd.push(visitedCircle);
-        }
-        
-        // 添加跑过背景（红色，40公里）
-        if (isRan) {
-          const ranCircle = new window.AMap.Circle({
-            center: city.location,
-            radius: 40000, // 40公里（从70公里修改为40公里）
-            fillColor: '#FF0000', // 红色
-            fillOpacity: 0.3,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.5,
-            strokeWeight: 1
-          });
-          circlesToAdd.push(ranCircle);
-        }
-        
-        // 添加收藏背景（绿色，30公里）
-        if (isCollected) {
-          const collectedCircle = new window.AMap.Circle({
-            center: city.location,
-            radius: 30000, // 30公里（从50公里修改为30公里）
-            fillColor: '#00FF00', // 绿色
-            fillOpacity: 0.3,
-            strokeColor: '#00FF00',
-            strokeOpacity: 0.5,
-            strokeWeight: 1
-          });
-          circlesToAdd.push(collectedCircle);
-        }
-        
-        // 添加所有背景圆圈到地图
-        circlesToAdd.forEach(circle => {
-          if (mapInstance.value) {
-            mapInstance.value.add(circle);
-            circles.push(circle);
-          }
-        });
-        
-        // 添加到地图
-        if (mapInstance.value) {
-          mapInstance.value.add(marker)
-          markers.push({ 
-            marker, 
-            city: city.name, 
-            location: city.location,
-            circles: circlesToAdd // 保存所有圆形背景引用
-          })
-        }
-        
-        // 创建信息窗口
-        const statusText = [];
-        if (isVisited) statusText.push('已去过');
-        if (isRan) statusText.push('已跑过');
-        if (isCollected) statusText.push('已收藏');
-        const displayStatus = statusText.length > 0 ? statusText.join(', ') : '未访问';
-        
-        const infoWindow = new window.AMap.InfoWindow({
-          content: `<div class="marker-info"><strong>${city.name}</strong><br/>${displayStatus}</div>`,
-          offset: new window.AMap.Pixel(0, -30)
-        })
-        
-        // 点击标记时打开信息窗口
-        marker.on('click', () => {
-          infoWindow.open(mapInstance.value, marker.getPosition())
-        })
-      } catch (error) {
-        console.error(`添加标记失败 (${city.name}):`, error)
-      }
-    }
+  // 创建地图实例
+  map = new AMap.Map('map-container', {
+    zoom: 5,
+    center: [108.953098, 34.2778], // 中国地理中心
+    mapStyle: 'amap://styles/normal',
+    features: ['bg', 'road', 'building', 'point'],
+    viewMode: '2D'
   })
-  
-  console.log(`已显示 ${allCities.length} 个城市，其中去过${visitedCities.length}个，跑过${ranCities.length}个，收藏${collectedCities.length}个`)
-}
 
-// 清除热力图标记
-const clearHeatmapMarkers = () => {
-  markers.forEach(item => {
-    if (mapInstance.value) {
-      mapInstance.value.remove(item.marker)
-      // 同时移除所有圆形背景
-      if (item.circles && Array.isArray(item.circles)) {
-        item.circles.forEach(circle => {
-          mapInstance.value.remove(circle);
-        });
-      }
-    }
+  // 添加地图控件
+  map.addControl(new AMap.Scale())
+  map.addControl(new AMap.ToolBar())
+  map.addControl(new AMap.ControlBar())
+
+  // 地图加载完成后的回调
+  map.on('complete', () => {
+    console.log('地图加载完成')
+    emit('map-ready', map)
   })
-  
-  markers = []
-  circles = [] // 清空圆形背景数组
-  console.log('已清除所有热力图标记和背景')
+
+  // 地图点击事件
+  map.on('click', (e) => {
+    console.log('地图点击位置:', e.lnglat)
+  })
 }
 
-// 恢复地图默认状态
-const restoreDefaultMap = () => {
-  // 清除热力图标记
-  clearHeatmapMarkers()
-  
-  // 不再添加默认标记
-  console.log('地图已恢复默认状态')
-}
-
-// 定位到城市
+// 定位到指定城市
 const locateToCity = (cityName, zoomLevel = 12) => {
-  if (!mapInstance.value) return
+  if (!map || !AMap) {
+    console.error('高德地图API未加载')
+    return
+  }
 
   // 使用高德地图的地理编码服务
-  window.AMap.plugin('AMap.Geocoder', () => {
-    const geocoder = new window.AMap.Geocoder()
+  AMap.plugin('AMap.Geocoder', () => {
+    const geocoder = new AMap.Geocoder()
     
     geocoder.getLocation(cityName, (status, result) => {
       if (status === 'complete' && result.geocodes.length > 0) {
         const location = result.geocodes[0].location
-        mapInstance.value.setCenter(location)
-        mapInstance.value.setZoom(zoomLevel)
+        map.setCenter(location)
+        map.setZoom(zoomLevel)
         
         // 添加标记
-        const marker = new window.AMap.Marker({
+        const marker = new AMap.Marker({
           position: location,
           title: cityName,
           animation: 'AMAP_ANIMATION_DROP'
         })
-        mapInstance.value.add(marker)
+        map.add(marker)
         
         // 添加信息窗体
-        const infoWindow = new window.AMap.InfoWindow({
+        const infoWindow = new AMap.InfoWindow({
           content: `<div style="padding: 10px;"><strong>${cityName}</strong></div>`,
-          offset: new window.AMap.Pixel(0, -30)
+          offset: new AMap.Pixel(0, -30)
         })
         
         marker.on('click', () => {
-          infoWindow.open(mapInstance.value, location)
+          infoWindow.open(map, location)
         })
       }
     })
@@ -242,26 +123,149 @@ const locateToProvince = (provinceName, zoomLevel = 8) => {
   locateToCity(provinceName, zoomLevel)
 }
 
+// 显示/隐藏热力图
+const toggleHeatmap = () => {
+  if (!map) return
+
+  if (showHeatmap.value) {
+    showHeatmapLayer()
+  } else {
+    hideHeatmapLayer()
+  }
+}
+
+// 显示热力图层
+const showHeatmapLayer = () => {
+  if (heatmapLayer) {
+    map.add(heatmapLayer)
+    return
+  }
+
+  // 加载热力图插件
+  AMap.plugin('AMap.Heatmap', () => {
+    const heatmapData = generateHeatmapData()
+    
+    heatmapLayer = new AMap.Heatmap(map, {
+      radius: 25,
+      opacity: [0, 0.8],
+      gradient: {
+        0.4: 'blue',
+        0.65: 'lime',
+        0.85: 'yellow',
+        1.0: 'red'
+      }
+    })
+    
+    heatmapLayer.setDataSet({
+      data: heatmapData,
+      max: 3
+    })
+  })
+}
+
+// 隐藏热力图层
+const hideHeatmapLayer = () => {
+  if (heatmapLayer) {
+    map.remove(heatmapLayer)
+  }
+}
+
+// 生成热力图数据（示例数据）
+const generateHeatmapData = () => {
+  // 示例热力图数据
+  const data = [
+    { lng: 116.405285, lat: 39.904989, count: 10 }, // 北京
+    { lng: 121.472644, lat: 31.231706, count: 8 },  // 上海
+    { lng: 113.280637, lat: 23.125178, count: 7 },  // 广州
+    { lng: 114.085947, lat: 22.547, count: 6 },     // 深圳
+    { lng: 118.767413, lat: 32.041544, count: 5 },  // 南京
+    { lng: 120.153576, lat: 30.287459, count: 4 },  // 杭州
+    { lng: 104.065735, lat: 30.659462, count: 3 }   // 成都
+  ]
+  
+  return data
+}
+
+// 导出地图
+const exportMap = async () => {
+  if (!map) return
+  
+  try {
+    const mapContainer = document.getElementById('map-container')
+    const canvas = await html2canvas(mapContainer, {
+      useCORS: true,
+      scale: 2
+    })
+    
+    // 创建下载链接
+    const link = document.createElement('a')
+    link.download = `china-map-${new Date().toISOString().split('T')[0]}.png`
+    link.href = canvas.toDataURL()
+    link.click()
+  } catch (error) {
+    console.error('导出地图失败:', error)
+  }
+}
+
+// 监听热力图切换
+watch(showHeatmap, (newVal) => {
+  toggleHeatmap()
+})
+
 // 暴露方法给父组件
 defineExpose({
-  setMapCenter,
-  showAllCitiesWithMultipleHeatmaps,
-  restoreDefaultMap,
   locateToCity,
   locateToProvince,
-  map: mapInstance
+  toggleHeatmap,
+  exportMap
 })
 </script>
 
 <style scoped>
 .map-viewer {
   height: 100%;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-color, #ffffff);
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  background-color: var(--header-bg, #f8f9fa);
+}
+
+.map-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.heatmap-toggle, .export-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border-color, #ccc);
+  background-color: var(--button-bg, #fff);
+  color: var(--button-color, #333);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.heatmap-toggle:hover, .export-btn:hover {
+  background-color: var(--button-hover-bg, #f0f0f0);
+}
+
+.heatmap-toggle.active {
+  background-color: var(--primary-color, #007bff);
+  color: white;
+  border-color: var(--primary-color, #007bff);
 }
 
 .map-container {
-  width: 100%;
-  height: 100%;
-  min-height: 400px;
+  flex: 1;
+  min-height: 0;
 }
 </style>
